@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css') }} " media="screen"/>
+        <title>{{ feed.feed.title|safe }}</title></head>
+    <body>
+        <h1>{{ feed.feed.title|safe }}</h1>
+        <hr>
+        {% for entry in feed.entries %}
+        <div class="feedentry">
+            <h3>{{ entry.title }}</h3>
+            {{ entry.summary|safe }}
+        </div>
+        {% endfor %}
+    </body>
+</html>

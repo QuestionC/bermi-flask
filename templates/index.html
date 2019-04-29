@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css') }} " media="screen"/>
+        <title>9gag Feeds</title>
+    </head>
+    <body>
+        <h1>9gag Feeds</h1>
+        <hr>
+        <ul>
+            {% for key in feeds.keys() %}
+            <li><a href="{{ url_for('feed', F=key) }}">{{key}}</a></li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
+
+
+

@@ -1,0 +1,16 @@
+*
+{
+    background-color: #ffffee;
+}
+
+body
+{
+    color: #1d1313;
+    max-width: 35em;
+    margin: auto;
+}
+
+div.feedentry
+{
+    margin-bottom: 30px;
+}
