@@ -1,14 +1,15 @@
 import feedparser
 import flask
 import html
+import time
 
 app = flask.Flask(__name__)
 
-feeds = {
-        'funny': 'https://9gag-rss.com/api/rss/get?code=9GAGFunnyNoGif&format=2',
-        'hot': 'https://9gag-rss.com/api/rss/get?code=9GAGHotNoGif&format=2',
-        'trending': 'https://9gag-rss.com/api/rss/get?code=9GAGNoGif&format=2',
-        'awesome': 'https://9gag-rss.com/api/rss/get?code=9GAGAwesomeNoGif&format=2'
+feeds = { # Key: (URL, cache, timestamp)
+        'funny': ('https://9gag-rss.com/api/rss/get?code=9GAGFunnyNoGif&format=2', None, None),
+        'hot': ('https://9gag-rss.com/api/rss/get?code=9GAGHotNoGif&format=2', None, None),
+        'trending': ('https://9gag-rss.com/api/rss/get?code=9GAGNoGif&format=2', None, None),
+        'awesome': ('https://9gag-rss.com/api/rss/get?code=9GAGAwesomeNoGif&format=2', None, None)
         }
 
 
@@ -20,13 +21,27 @@ def index():
 @app.route('/<F>/')
 def feed(F):
     if not F in feeds:
-        return flask.render_template('error.html')
+        return flask.render_template('index.html')
 
-    # Fix escaping, title was showing up as &rdquot;Pressure ?&ldquot; for https://9gag.com/gag/amBd1z2
-    d = feedparser.parse(feeds[F])
-    d.feed.title = html.unescape(d.feed.title)
-    for entry in d.entries:
-        entry.title = html.unescape(entry.title)
 
-    return flask.render_template('feed.html', feed=d)
+    url, cache, timestamp = feeds[F]
+    now = time.time()
 
+    # Recache
+    if timestamp == None or now - timestamp > 10: # every 10 seconds
+        # print("Cache Miss")
+        d = feedparser.parse(url)
+
+        # Fix escaping, title was showing up as &rdquot;Pressure ?&ldquot; for https://9gag.com/gag/amBd1z2
+        d.feed.title = html.unescape(d.feed.title)
+        for entry in d.entries:
+            entry.title = html.unescape(entry.title)
+    
+        cache = flask.render_template('feed.html', feed=d)
+        timestamp = now
+        feeds[F] = (url, cache, timestamp)
+    else:
+        # print("Cache Hit")
+        pass
+
+    return cache
