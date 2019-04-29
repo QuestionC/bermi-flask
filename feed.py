@@ -21,7 +21,7 @@ def index():
 @app.route('/<F>/')
 def feed(F):
     if not F in feeds:
-        return flask.render_template('index.html')
+        return flask.render_template('index.html', feeds=feeds)
 
 
     url, cache, timestamp = feeds[F]
